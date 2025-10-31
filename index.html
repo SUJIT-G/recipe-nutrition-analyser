@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Nutrition Analyzer – ToolBox Hub</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configure Tailwind and set a dark base theme -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        // Dark mode colors
+                        'dark-bg': '#0B111D', // Very dark blue/black
+                        'dark-card': '#141E30', // Slightly lighter card background
+                        // Neon/Glow colors
+                        'neon-primary': '#00F0FF', // Bright Cyan/Electric Blue for glow
+                        'neon-secondary': '#FF66AA', // Bright Pink for accents
+                    },
+                    boxShadow: {
+                        // Custom glow effect for elements
+                        'neon': '0 0 10px rgba(0, 240, 255, 0.6), 0 0 20px rgba(0, 240, 255, 0.4)',
+                        'neon-sm': '0 0 5px rgba(0, 240, 255, 0.5)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Base styles for the dark mode and body font */
+        body {
+            background-color: #0B111D; /* dark-bg */
+            color: #E2E8F0; /* Light gray text */
+            transition: background-color 0.5s;
+        }
+
+        /* Neon Glow Utility Class */
+        .glow-text {
+            color: #00F0FF; /* neon-primary */
+            text-shadow: 0 0 5px rgba(0, 240, 255, 0.7), 0 0 10px rgba(0, 240, 255, 0.5);
+            transition: text-shadow 0.3s;
+        }
+
+        /* Input field styling */
+        textarea, input {
+            background-color: #141E30; /* dark-card */
+            border: 1px solid #00F0FF33; /* neon-primary with opacity */
+            color: #E2E8F0;
+        }
+
+        /* Focus state with stronger glow */
+        textarea:focus, input:focus {
+            border-color: #00F0FF;
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.8);
+            outline: none;
+        }
+
+        /* Custom scrollbar for dark theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #00F0FF44; /* neon-primary */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background-color: #141E30; /* dark-card */
+        }
+    </style>
+</head>
+<body class="font-sans min-h-screen flex flex-col">
+
+    <!-- Header: ToolBox Hub (Glow) -->
+    <header class="bg-dark-card shadow-xl shadow-gray-900/50 p-4 sticky top-0 z-10 border-b border-neon-primary/20">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="#" class="flex items-center space-x-2 text-xl font-bold glow-text">
+                <!-- Glowing Tool Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <line x1="12" y1="18" x2="12" y2="10"></line>
+                    <polyline points="9 13 12 10 15 13"></polyline>
+                </svg>
+                <span>ToolBox Hub</span>
+            </a>
+            <nav>
+                <button class="px-4 py-2 text-sm font-semibold rounded-full bg-neon-secondary text-dark-bg hover:bg-opacity-90 transition-colors shadow-lg shadow-neon-secondary/50">
+                    Access Console
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content: Recipe Nutrition Analyzer -->
+    <main class="flex-grow container mx-auto p-4 md:p-8">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-2 text-center glow-text">
+                Recipe Nutrition Analyzer
+            </h1>
+            <p class="text-lg text-gray-400 mb-8 text-center">
+                Input your recipe details for spectral macro analysis.
+            </p>
+
+            <div class="bg-dark-card p-6 md:p-10 rounded-3xl shadow-neon border border-neon-primary/30 grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                <!-- Input Panel -->
+                <section class="lg:border-r lg:border-neon-primary/10 lg:pr-8">
+                    <h2 class="text-2xl font-bold text-gray-200 mb-4">1. Enter Ingredients Data</h2>
+                    <textarea
+                        id="ingredientInput"
+                        rows="10"
+                        placeholder="Example:
+1 cup uncooked rice
+500g chicken breast
+2 tbsp olive oil
+1 large onion"
+                        class="w-full p-4 rounded-xl transition-shadow resize-none text-sm placeholder-gray-500"
+                    ></textarea>
+                    <p id="error-message" class="text-neon-secondary text-sm mt-2 hidden">Data input required for spectral analysis.</p>
+
+                    <button
+                        id="analyzeButton"
+                        class="mt-6 w-full px-6 py-3 bg-neon-primary text-dark-bg font-bold rounded-xl hover:bg-opacity-90 transition-all duration-300 transform hover:scale-[1.01] shadow-xl shadow-neon-primary/50 text-lg uppercase tracking-wider"
+                        onclick="analyzeNutrition()"
+                    >
+                        Initiate Scan
+                    </button>
+                </section>
+
+                <!-- Results Panel -->
+                <section id="resultsSection" class="relative">
+                    <h2 class="text-2xl font-bold text-gray-200 mb-4">2. Nutritional Spectrum</h2>
+
+                    <!-- Initial Placeholder / DNA Graphic -->
+                    <div id="initialState" class="flex flex-col items-center justify-center p-4 h-full">
+                        <!-- Simplified Glowing DNA Helix SVG -->
+                        <svg class="w-24 h-48 text-neon-primary/30 animate-pulse" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M50 0C50 100 150 100 150 200C150 300 50 300 50 400" fill="none" stroke="currentColor" stroke-width="8" stroke-dasharray="20 10"/>
+                            <path d="M150 0C150 100 50 100 50 200C50 300 150 300 150 400" fill="none" stroke="currentColor" stroke-width="8" stroke-dasharray="20 10"/>
+                        </svg>
+                        <p class="text-gray-500 font-medium mt-4">Awaiting data input...</p>
+                    </div>
+
+                    <!-- Loading Indicator (hidden by default) -->
+                    <div id="loadingIndicator" class="absolute inset-0 bg-dark-card/80 backdrop-blur-sm flex items-center justify-center rounded-lg hidden z-20">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-4 border-neon-primary shadow-neon-sm"></div>
+                        <p class="ml-4 glow-text font-semibold">Scanning...</p>
+                    </div>
+
+                    <!-- Actual Results (hidden by default) -->
+                    <div id="resultsContent" class="hidden space-y-6">
+                        <!-- Total Calories Card -->
+                        <div class="p-6 bg-dark-card border-l-4 border-neon-primary rounded-xl shadow-neon-sm">
+                            <p class="text-sm font-medium text-neon-primary uppercase tracking-wider">Total Estimated Calories</p>
+                            <p id="totalCalories" class="text-5xl font-extrabold text-neon-primary mt-1 glow-text">0</p>
+                        </div>
+
+                        <!-- Macronutrient Breakdown -->
+                        <div class="grid grid-cols-3 gap-4">
+                            <!-- Protein -->
+                            <div class="p-4 bg-dark-card rounded-lg border border-neon-primary/20 shadow-lg shadow-gray-900/30">
+                                <p class="text-xs font-semibold uppercase text-gray-400">Protein (g)</p>
+                                <p id="proteinValue" class="text-3xl font-extrabold text-neon-primary mt-1 glow-text">0</p>
+                            </div>
+                            <!-- Fat -->
+                            <div class="p-4 bg-dark-card rounded-lg border border-neon-primary/20 shadow-lg shadow-gray-900/30">
+                                <p class="text-xs font-semibold uppercase text-gray-400">Fat (g)</p>
+                                <p id="fatValue" class="text-3xl font-extrabold text-neon-primary mt-1 glow-text">0</p>
+                            </div>
+                            <!-- Carbs -->
+                            <div class="p-4 bg-dark-card rounded-lg border border-neon-primary/20 shadow-lg shadow-gray-900/30">
+                                <p class="text-xs font-semibold uppercase text-gray-400">Carbs (g)</p>
+                                <p id="carbsValue" class="text-3xl font-extrabold text-neon-primary mt-1 glow-text">0</p>
+                            </div>
+                        </div>
+
+                        <!-- Visualization Placeholder -->
+                        <div class="pt-4 border-t border-neon-primary/20 mt-4">
+                            <p class="text-base font-semibold text-gray-300 mb-2">Macro Distribution Spectrum</p>
+                            <div id="macroBar" class="h-6 flex rounded-full overflow-hidden shadow-inner shadow-gray-900">
+                                <!-- Bars will be generated by JS -->
+                            </div>
+                            <div class="flex justify-between text-xs mt-2 text-gray-500">
+                                <span class="text-blue-400">Protein</span>
+                                <span class="text-yellow-400">Fat</span>
+                                <span class="text-green-400">Carbs</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer: Copyright -->
+    <footer class="bg-dark-card p-4 mt-8 border-t border-neon-primary/10">
+        <div class="max-w-7xl mx-auto text-center text-sm text-gray-600">
+            &copy; 2024 ToolBox Hub. All rights reserved. | Spectral Nutrition Analysis System
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const ingredientInput = document.getElementById('ingredientInput');
+        const totalCaloriesElement = document.getElementById('totalCalories');
+        const proteinValueElement = document.getElementById('proteinValue');
+        const fatValueElement = document.getElementById('fatValue');
+        const carbsValueElement = document.getElementById('carbsValue');
+        const macroBar = document.getElementById('macroBar');
+        const initialState = document.getElementById('initialState');
+        const resultsContent = document.getElementById('resultsContent');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const errorMessage = document.getElementById('error-message');
+
+        /**
+         * Simulates an API call to analyze nutrition based on keywords in the input text.
+         */
+        function simulateNutritionAnalysis(ingredientsText) {
+            const lowerText = ingredientsText.toLowerCase();
+            let calories = 0;
+            let protein = 0;
+            let fat = 0;
+            let carbs = 0;
+
+            // Simple heuristic analysis (mock data)
+            if (lowerText.includes('chicken breast')) { calories += 495; protein += 84; fat += 17; carbs += 0; }
+            if (lowerText.includes('rice')) { calories += 680; protein += 14; fat += 1; carbs += 150; }
+            if (lowerText.includes('olive oil')) { calories += 240; protein += 0; fat += 28; carbs += 0; }
+            if (lowerText.includes('avocado')) { calories += 322; protein += 4; fat += 29; carbs += 17; }
+            if (lowerText.includes('pasta')) { calories += 500; protein += 18; fat += 4; carbs += 100; }
+            if (lowerText.includes('sugar') || lowerText.includes('honey')) { calories += 150; protein += 0; fat += 0; carbs += 40; }
+            if (lowerText.includes('onion') || lowerText.includes('garlic')) { calories += 50; protein += 2; fat += 0; carbs += 10; }
+
+            // Ensure values are whole numbers for cleaner display
+            return {
+                calories: Math.round(calories),
+                protein: Math.round(protein),
+                fat: Math.round(fat),
+                carbs: Math.round(carbs)
+            };
+        }
+
+        /**
+         * Updates the UI with the calculated nutrition data.
+         */
+        function updateResults(data) {
+            const totalMacros = data.protein + data.fat + data.carbs;
+
+            totalCaloriesElement.textContent = data.calories.toLocaleString();
+            proteinValueElement.textContent = data.protein.toLocaleString();
+            fatValueElement.textContent = data.fat.toLocaleString();
+            carbsValueElement.textContent = data.carbs.toLocaleString();
+
+            // Calculate percentage for macro visualization bar
+            const proteinPct = totalMacros > 0 ? (data.protein / totalMacros) * 100 : 0;
+            const fatPct = totalMacros > 0 ? (data.fat / totalMacros) * 100 : 0;
+            const carbsPct = totalMacros > 0 ? (data.carbs / totalMacros) * 100 : 0;
+
+            // Update Macro Bar visualization with distinct colors
+            macroBar.innerHTML = `
+                <div style="width: ${proteinPct}%;" class="bg-blue-500 h-full transition-all duration-500 shadow-lg shadow-blue-500/30" title="Protein: ${proteinPct.toFixed(1)}%"></div>
+                <div style="width: ${fatPct}%;" class="bg-yellow-500 h-full transition-all duration-500 shadow-lg shadow-yellow-500/30" title="Fat: ${fatPct.toFixed(1)}%"></div>
+                <div style="width: ${carbsPct}%;" class="bg-green-500 h-full transition-all duration-500 shadow-lg shadow-green-500/30" title="Carbs: ${carbsPct.toFixed(1)}%"></div>
+            `;
+        }
+
+        /**
+         * Main function triggered by the "Analyze" button.
+         */
+        function analyzeNutrition() {
+            const ingredientsText = ingredientInput.value.trim();
+
+            if (!ingredientsText) {
+                errorMessage.classList.remove('hidden');
+                return;
+            } else {
+                errorMessage.classList.add('hidden');
+            }
+
+            // 1. Show Loading State
+            initialState.classList.add('hidden');
+            resultsContent.classList.add('hidden');
+            loadingIndicator.classList.remove('hidden');
+
+            // Simulate Network Delay
+            setTimeout(() => {
+                try {
+                    // 2. Perform Analysis
+                    const nutritionData = simulateNutritionAnalysis(ingredientsText);
+
+                    // 3. Update Results
+                    updateResults(nutritionData);
+
+                    // 4. Hide Loading and show Results
+                    loadingIndicator.classList.add('hidden');
+                    resultsContent.classList.remove('hidden');
+
+                } catch (e) {
+                    console.error("Analysis Error:", e);
+                    // Handle error state gracefully in a real app
+                    loadingIndicator.classList.add('hidden');
+                    initialState.classList.remove('hidden');
+                    alertBox("Spectral interference detected. Analysis failed. Please try again.", "Error");
+                }
+            }, 1800); // Increased delay for more dramatic "Scanning" effect
+        }
+
+        /**
+         * Custom message box (instead of alert()).
+         */
+        function alertBox(message, title = "System Notification") {
+            const existingModal = document.getElementById('customAlertModal');
+            if (existingModal) existingModal.remove();
+
+            const modalHtml = `
+                <div id="customAlertModal" class="fixed inset-0 bg-gray-900 bg-opacity-70 z-50 flex items-center justify-center p-4">
+                    <div class="bg-dark-card rounded-xl p-6 w-full max-w-sm shadow-neon border border-neon-primary/50 transform transition-all duration-300 scale-100">
+                        <h3 class="text-xl font-bold text-neon-primary mb-3 glow-text">${title}</h3>
+                        <p class="text-gray-400 mb-6">${message}</p>
+                        <button onclick="document.getElementById('customAlertModal').remove()" class="w-full py-2 bg-neon-secondary text-dark-bg font-semibold rounded-lg hover:bg-opacity-90 transition-colors shadow-md shadow-neon-secondary/40">
+                            Acknowledge
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+
+        // Initialize display to ensure the initial state is visible on load
+        window.onload = function() {
+            initialState.classList.remove('hidden');
+            resultsContent.classList.add('hidden');
+        };
+
+    </script>
+</body>
+</html>
